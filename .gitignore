@@ -214,3 +214,10 @@ __pycache__/
 .streamlit/secrets.toml
 venv/
 .DS_Store
+
+# Clutter from folder not needed in repository
+MyBooks.csv
+import_csv.py
+Check_csv.py
+enrich_openlibrary.py
+enrich_google.py
