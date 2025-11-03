@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-"""
-OpenLibrary API Test - Standalone test for extracting book data
-Test ISBN: 9781984896438
-
-"""
-#!/usr/bin/env python3
 """
 API calls for Personal Library Management System
 Handles external API integrations for book metadata retrieval
@@ -13,9 +6,6 @@ Handles external API integrations for book metadata retrieval
 import requests
 import json
 from typing import Optional, Dict, Any
-
-# For standalone testing - remove when integrating
-TEST_ISBN = "9780805210576"  # Good Girl Bad Blood - has subtitle
 
 def get_openlibrary_book_data(isbn: str) -> Optional[Dict[str, Any]]:
     """
@@ -172,12 +162,3 @@ def get_google_books_thumbnail(isbn: str) -> Optional[str]:
     except json.JSONDecodeError as e:
         print(f"Error parsing Google Books response: {e}")
         return None
-
-if __name__ == "__main__":
-    # Test the function
-    result = get_openlibrary_book_data(TEST_ISBN)
-    if result:
-        for field, value in result.items():
-            print(f"{field}: {value}")
-    else:
-        print("No data found")
