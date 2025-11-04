@@ -67,18 +67,18 @@ def extract_book_fields(data: Dict[str, Any], isbn: str) -> Dict[str, Any]:
     else:
         length_value = 0
     return {
-        'Title': data.get('title'),
-        'Subtitle': data.get('subtitle'),
-        'Author': extract_first_author(data),
-        'ISBNCode': isbn,
-        'Publisher': extract_first_publisher(data),
-        'PublishedDate': data.get('publish_date'),
-        'Length': length_value,  # ← Use the processed int value
-        'Memo': None,
-        'Rating': None,
-        'Description': description,
-        'ImageURL': image_url,
-        'Excerpt': extract_first_excerpt(data)
+        'title': data.get('title'),
+        'subtitle': data.get('subtitle'),
+        'author': extract_first_author(data),
+        'isbncode': isbn,
+        'publisher': extract_first_publisher(data),
+        'publisheddate': data.get('publish_date'),
+        'length': length_value,  # ← Use the processed int value
+        'memo': None,
+        'rating': None,
+        'description': description,
+        'imageurl': image_url,
+        'excerpt': extract_first_excerpt(data)
     }
 
 def extract_first_author(data: Dict[str, Any]) -> Optional[str]:
