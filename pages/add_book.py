@@ -89,18 +89,18 @@ def show_book_review_form(book_data, edit_mode=False):
     def save_book_callback():
         # Access form values via session state using widget keys
         updated_book_data = {
-            'Title': st.session_state.form_title,
-            'Subtitle': st.session_state.form_subtitle if st.session_state.form_subtitle else None,
-            'Author': st.session_state.form_author,
-            'ISBNCode': st.session_state.form_isbn,
-            'Publisher': st.session_state.form_publisher if st.session_state.form_publisher else None,
-            'PublishedDate': st.session_state.form_published_date if st.session_state.form_published_date else None,
-            'Length': st.session_state.form_length if st.session_state.form_length and st.session_state.form_length > 0 else None,
-            'Memo': st.session_state.form_memo if st.session_state.form_memo else None,
-            'Rating': st.session_state.form_rating if st.session_state.form_rating and st.session_state.form_rating > 0 else None,
-            'Description': book_data.get('Description'),
-            'ImageURL': book_data.get('ImageURL'),
-            'Excerpt': st.session_state.form_excerpt if st.session_state.form_excerpt else None
+            'title': st.session_state.form_title,
+            'subtitle': st.session_state.form_subtitle if st.session_state.form_subtitle else None,
+            'author': st.session_state.form_author,
+            'isbncode': st.session_state.form_isbn,
+            'publisher': st.session_state.form_publisher if st.session_state.form_publisher else None,
+            'publisheddate': st.session_state.form_published_date if st.session_state.form_published_date else None,
+            'length': st.session_state.form_length if st.session_state.form_length and st.session_state.form_length > 0 else None,
+            'memo': st.session_state.form_memo if st.session_state.form_memo else None,
+            'rating': st.session_state.form_rating if st.session_state.form_rating and st.session_state.form_rating > 0 else None,
+            'description': book_data.get('description'),
+            'imageurl': book_data.get('imageurl'),
+            'excerpt': st.session_state.form_excerpt if st.session_state.form_excerpt else None
         }
         
         # Save to database - check if update or add
@@ -124,16 +124,16 @@ def show_book_review_form(book_data, edit_mode=False):
         col1, col2 = st.columns(2)
         
         with col1:
-            st.text_input("Book Title:", value=book_data.get('Title', ''), key='form_title')
-            st.text_input("Author:", value=book_data.get('Author', ''), key='form_author') 
-            st.text_input("ISBN:", value=book_data.get('ISBNCode', ''), key='form_isbn')
-            st.text_input("Publisher:", value=book_data.get('Publisher', ''), key='form_publisher')
+            st.text_input("Book Title:", value=book_data.get('title', ''), key='form_title')
+            st.text_input("Author:", value=book_data.get('author', ''), key='form_author') 
+            st.text_input("ISBN:", value=book_data.get('isbncode', ''), key='form_isbn')
+            st.text_input("Publisher:", value=book_data.get('publisher', ''), key='form_publisher')
             
         with col2:
-            st.text_input("Subtitle:", value=book_data.get('Subtitle', ''), key='form_subtitle')
-            st.text_input("Publication Date:", value=book_data.get('PublishedDate', ''), key='form_published_date')
+            st.text_input("Subtitle:", value=book_data.get('subtitle', ''), key='form_subtitle')
+            st.text_input("Publication Date:", value=book_data.get('publisheddate', ''), key='form_published_date')
             # Handle Length field - convert to int if it's not already
-            length_value = book_data.get('Length', 0)
+            length_value = book_data.get('length', 0)
             if length_value and length_value != '':
                 try:
                     length_value = int(length_value)
@@ -143,7 +143,7 @@ def show_book_review_form(book_data, edit_mode=False):
                 length_value = 0
             st.number_input("Pages:", value=length_value, min_value=0, key='form_length')
             # Handle Rating field - convert to float
-            rating_value = book_data.get('Rating', 0.0)
+            rating_value = book_data.get('rating', 0.0)
             if rating_value and rating_value != '':
                 try:
                     rating_value = float(rating_value)
@@ -153,8 +153,8 @@ def show_book_review_form(book_data, edit_mode=False):
                 rating_value = 0.0
             st.slider("Your Rating:", min_value=0.0, max_value=5.0, value=rating_value, step=0.5, key='form_rating')
         
-        st.text_area("Personal Notes:", value=book_data.get('Memo', ''), key='form_memo')
-        st.text_area("Book Excerpt:", value=book_data.get('Excerpt', ''), key='form_excerpt', height=150)
+        st.text_area("Personal Notes:", value=book_data.get('memo', ''), key='form_memo')
+        st.text_area("Book Excerpt:", value=book_data.get('excerpt', ''), key='form_excerpt', height=150)
         
         # Use callback instead of conditional processing
         button_text = "Update Book" if edit_mode else "Add Book to Library"
