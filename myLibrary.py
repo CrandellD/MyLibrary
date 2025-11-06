@@ -12,14 +12,13 @@ st.set_page_config(page_title="Personal Library", page_icon="📚", layout="wide
 # Hide auto-generated page navigation and Streamlit UI elements
 st.markdown("""
 <style>
-div[data-testid="stSidebarNav"] {display: none;}
+div[data-testid="stSidebarNav"] ul {display: none;}
 div.block-container {padding-top: 1rem;}
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
-
 def main():
     st.title("📚 My Library")
     
