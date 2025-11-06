@@ -8,10 +8,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api_calls import get_openlibrary_book_data
 from database import get_book_by_isbn, update_book_in_database, delete_book_from_database, get_delete_pin
 
-# Hide auto-generated page navigation
+# Hide auto-generated page navigation and Streamlit UI elements
 st.markdown("""
 <style>
 div[data-testid="stSidebarNav"] {display: none;}
+div.block-container {padding-top: 1rem;}
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -66,7 +70,7 @@ def show_edit_book_page():
         
     # Cancel button
     if st.button("Cancel Edit"):
-        # Clean up session state
+        # Clean up session state but preserve return position
         if 'edit_isbn' in st.session_state:
             del st.session_state.edit_isbn
         if 'edit_book_data' in st.session_state:
@@ -75,6 +79,7 @@ def show_edit_book_page():
             del st.session_state.save_success
         if 'save_message' in st.session_state:
             del st.session_state.save_message
+        # Keep return_* variables for position restoration
         st.switch_page("myLibrary.py")
 
 def show_edit_form(book_data):
@@ -82,14 +87,13 @@ def show_edit_form(book_data):
     
     st.subheader("Edit Book Information")
     
-    # ADD THIS SECTION - Initialize delete confirmation states
-    # These track whether user clicked delete and entered PIN
+    # Initialize delete confirmation states
     if 'show_delete_confirm' not in st.session_state:
-        st.session_state.show_delete_confirm = False  # Whether to show PIN input
+        st.session_state.show_delete_confirm = False
     if 'delete_success' not in st.session_state:
-        st.session_state.delete_success = False  # Whether deletion worked
+        st.session_state.delete_success = False
     if 'delete_message' not in st.session_state:
-        st.session_state.delete_message = ""  # Success/error message
+        st.session_state.delete_message = ""
 
     # Callback function that runs BEFORE the rerun
     def update_book_callback():
@@ -116,6 +120,10 @@ def show_edit_form(book_data):
         st.session_state.save_success = success
         st.session_state.save_message = message
         
+        # Store ISBN to show book at top of library when returning
+        if success:
+            st.session_state.show_book_first = updated_book_data['isbncode']
+        
         # Clear edit data if successful
         if success:
             if 'edit_isbn' in st.session_state:
@@ -123,8 +131,6 @@ def show_edit_form(book_data):
 
     def trigger_delete_confirmation():
         """Callback that runs when Delete Book button is clicked"""
-        # This sets the flag to show the PIN input field
-        # Callback runs BEFORE the page reruns, so state is set properly
         st.session_state.show_delete_confirm = True
     
     with st.form("book_edit_form"):
@@ -176,47 +182,37 @@ def show_edit_form(book_data):
         # Submit button
         st.form_submit_button("Update Book", on_click=update_book_callback)
     
-    # ADD THIS SECTION HERE - at the same indentation as the comment below
-    # We put this outside the form because forms can only have one submit button
-    st.markdown("---")  # Visual separator line
+    # Delete section outside form
+    st.markdown("---")
     st.markdown("**Delete Book**")
     
-    # Delete button with callback - this will trigger the PIN confirmation
     if st.button("Delete Book", type="secondary", help="Permanently delete this book", 
                 on_click=trigger_delete_confirmation):
-        pass  # The callback handles everything, so button body can be empty
+        pass
 
-        # This only appears when show_delete_confirm flag is True
     if st.session_state.get('show_delete_confirm', False):
         st.markdown("### ⚠️ Confirm Deletion")
         st.warning("This action cannot be undone!")
         
-        # PIN input field
         pin_input = st.text_input("Enter PIN to confirm deletion:", 
                                  type="password", 
                                  key="delete_pin_input")
         
-        # Two buttons: Confirm and Cancel
         col1, col2 = st.columns(2)
         with col1:
             if st.button("🗑️ Confirm Delete", type="primary"):
-                # Check if PIN was entered
                 if not pin_input:
                     st.error("Please enter PIN to confirm deletion")
                 else:
-                    # Get the correct PIN from database
                     correct_pin = get_delete_pin()
                     
-                    # Verify PIN matches
                     if pin_input == correct_pin:
-                        # PIN is correct - delete the book
                         isbn = st.session_state.edit_isbn
                         success, message = delete_book_from_database(isbn)
                         
-                        # Store results for display
                         st.session_state.delete_success = success
                         st.session_state.delete_message = message
-                        st.session_state.show_delete_confirm = False  # Hide PIN input
+                        st.session_state.show_delete_confirm = False
                         st.rerun()
                     else:
                         st.error("Incorrect PIN")
@@ -226,7 +222,6 @@ def show_edit_form(book_data):
                 st.session_state.show_delete_confirm = False
                 st.rerun()
 
-
     # Display results after form submission
     if 'save_success' in st.session_state:
         if st.session_state.save_success:
@@ -235,11 +230,10 @@ def show_edit_form(book_data):
             for key in ['save_success', 'save_message', 'edit_isbn', 'edit_book_data']:
                 if key in st.session_state:
                     del st.session_state[key]
-            # Go straight to main library page
+            # Keep show_book_first and return_* variables
             st.switch_page("myLibrary.py")
         else:
             st.error(st.session_state.save_message)
-            # Clear only the result states, keep book data for retry
             del st.session_state.save_success
             del st.session_state.save_message
 

@@ -113,6 +113,10 @@ def show_book_review_form(book_data, edit_mode=False):
         st.session_state.save_success = success
         st.session_state.save_message = message
         
+        # Store ISBN to show book at top of library when returning
+        if success:
+            st.session_state.show_book_first = updated_book_data['isbncode']
+        
         # Clear edit mode if successful update
         if edit_mode and success:
             if 'edit_mode' in st.session_state:
@@ -175,6 +179,9 @@ def show_book_review_form(book_data, edit_mode=False):
                 def add_another():
                     if 'book_data' in st.session_state:
                         del st.session_state.book_data
+                    # Clear show_book_first so it doesn't interfere with next add
+                    if 'show_book_first' in st.session_state:
+                        del st.session_state.show_book_first
                     st.session_state.add_another_book = True
                 
                 # Show navigation options after adding
