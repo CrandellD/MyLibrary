@@ -8,12 +8,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from api_calls import get_openlibrary_book_data
 from database import add_book_to_database, get_book_by_isbn, update_book_in_database
 
-# # Hide auto-generated page navigation
-# st.markdown("""
-# <style>
-# div[data-testid="stSidebarNav"] {display: none;}
-# </style>
-# """, unsafe_allow_html=True)
+# Hide auto-generated page navigation
+st.markdown("""
+<style>
+div[data-testid="stSidebarNav"] {display: none;}
+</style>
+""", unsafe_allow_html=True)
 
 def show_add_book_page():
     """Display the Add Book page with ISBN lookup and form"""

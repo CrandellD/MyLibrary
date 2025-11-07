@@ -7,12 +7,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database import get_book_by_isbn
 
-# # Hide auto-generated page navigation
-# st.markdown("""
-# <style>
-# div[data-testid="stSidebarNav"] {display: none;}
-# </style>
-# """, unsafe_allow_html=True)
+# Hide auto-generated page navigation
+st.markdown("""
+<style>
+div[data-testid="stSidebarNav"] {display: none;}
+</style>
+""", unsafe_allow_html=True)
 
 # # Hide auto-generated page navigation and Streamlit UI elements
 # st.markdown("""
