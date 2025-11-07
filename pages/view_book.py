@@ -11,26 +11,30 @@ from database import get_book_by_isbn
 st.markdown("""
 <style>
 div[data-testid="stSidebarNav"] {display: none;}
+div.block-container {padding-top: 1rem;}
 </style>
 """, unsafe_allow_html=True)
 
-# # Hide auto-generated page navigation and Streamlit UI elements
-# st.markdown("""
-# <style>
-# div[data-testid="stSidebarNav"] {display: none;}
-# div.block-container {padding-top: 1rem;}
+# Save to add back a piece at a time
 # #MainMenu {visibility: hidden;}
 # footer {visibility: hidden;}
 # header {visibility: hidden;}
-# </style>
-# """, unsafe_allow_html=True)
-
 
 def show_view_book_page():
     """Display the View Book page (read-only)"""
     
     st.title("View Book")
     
+    if st.sidebar.button("Return to Library", use_container_width=True):
+        # Set the book to show first when returning
+        st.session_state.show_book_first = st.session_state.edit_isbn
+        # Clean up session state
+        if 'edit_isbn' in st.session_state:
+            del st.session_state.edit_isbn
+        if 'view_mode' in st.session_state:
+            del st.session_state.view_mode
+        st.switch_page("myLibrary.py")
+
     # Check if we have an ISBN to view
     if 'edit_isbn' not in st.session_state:
         st.error("No book selected for viewing")
@@ -52,17 +56,6 @@ def show_view_book_page():
     
     # Show the book information (read-only)
     show_book_info(book_data)
-    
-    # Return to Library button
-    if st.button("Return to Library"):
-        # Set the book to show first when returning
-        st.session_state.show_book_first = st.session_state.edit_isbn
-        # Clean up session state
-        if 'edit_isbn' in st.session_state:
-            del st.session_state.edit_isbn
-        if 'view_mode' in st.session_state:
-            del st.session_state.view_mode
-        st.switch_page("myLibrary.py")
 
 def show_book_info(book_data):
     """Display book data in read-only format"""

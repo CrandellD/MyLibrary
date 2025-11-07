@@ -12,10 +12,11 @@ from database import get_book_by_isbn, update_book_in_database, delete_book_from
 st.markdown("""
 <style>
 div[data-testid="stSidebarNav"] {display: none;}
+div.block-container {padding-top: 1rem;}
 </style>
 """, unsafe_allow_html=True)
 
-# div.block-container {padding-top: 1rem;}
+# Save to add back a piece at a time
 # #MainMenu {visibility: hidden;}
 # footer {visibility: hidden;}
 # header {visibility: hidden;}
@@ -25,6 +26,20 @@ def show_edit_book_page():
     
     st.title("Edit Book")
     
+    if st.sidebar.button("Cancel Edit", use_container_width=True):
+        # Set the book to show first when returning
+        st.session_state.show_book_first = st.session_state.edit_isbn
+        # Clean up edit session state
+        if 'edit_isbn' in st.session_state:
+            del st.session_state.edit_isbn
+        if 'edit_book_data' in st.session_state:
+            del st.session_state.edit_book_data
+        if 'save_success' in st.session_state:
+            del st.session_state.save_success
+        if 'save_message' in st.session_state:
+            del st.session_state.save_message
+        st.switch_page("myLibrary.py")
+
     # Check if we just completed an update
     if 'save_success' in st.session_state and st.session_state.save_success:
         st.success(st.session_state.save_message)
@@ -68,20 +83,10 @@ def show_edit_book_page():
    # Show the edit form - unique container key forces scroll reset
     with st.container(key=f"edit_form_{isbn}"):
         show_edit_form(st.session_state.edit_book_data)
-        
-    # Cancel button
-    if st.button("Cancel Edit"):
-        # Clean up session state but preserve return position
-        if 'edit_isbn' in st.session_state:
-            del st.session_state.edit_isbn
-        if 'edit_book_data' in st.session_state:
-            del st.session_state.edit_book_data
-        if 'save_success' in st.session_state:
-            del st.session_state.save_success
-        if 'save_message' in st.session_state:
-            del st.session_state.save_message
-        # Keep return_* variables for position restoration
-        st.switch_page("myLibrary.py")
+
+def trigger_update_confirmation():
+    """Callback that runs when Update Book button is clicked"""
+    st.session_state.show_update_confirm = True
 
 def show_edit_form(book_data):
     """Display book data in editable form"""
@@ -91,6 +96,8 @@ def show_edit_form(book_data):
     # Initialize delete confirmation states
     if 'show_delete_confirm' not in st.session_state:
         st.session_state.show_delete_confirm = False
+    if 'show_update_confirm' not in st.session_state:
+        st.session_state.show_update_confirm = False
     if 'delete_success' not in st.session_state:
         st.session_state.delete_success = False
     if 'delete_message' not in st.session_state:
@@ -180,8 +187,36 @@ def show_edit_form(book_data):
             except:
                 st.caption("Cover image could not be loaded")
         
-        # Submit button
-        st.form_submit_button("Update Book", on_click=update_book_callback)
+        # Submit button with PIN confirmation trigger
+        st.form_submit_button("Update Book", on_click=trigger_update_confirmation)
+    
+    # Update confirmation section outside form
+    if st.session_state.get('show_update_confirm', False):
+        st.markdown("### 🔒 Confirm Update")
+        
+        pin_input = st.text_input("Enter PIN to confirm update:", 
+                                 type="password", 
+                                 key="update_pin_input")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("✅ Confirm Update", type="primary"):
+                if not pin_input:
+                    st.error("Please enter PIN to confirm update")
+                else:
+                    correct_pin = get_delete_pin()
+                    
+                    if pin_input == correct_pin:
+                        update_book_callback()
+                        st.session_state.show_update_confirm = False
+                        st.rerun()
+                    else:
+                        st.error("Incorrect PIN")
+                        
+        with col2:
+            if st.button("❌ Cancel Update", type="secondary"):
+                st.session_state.show_update_confirm = False
+                st.rerun()
     
     # Delete section outside form
     st.markdown("---")

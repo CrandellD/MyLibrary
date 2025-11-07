@@ -12,12 +12,22 @@ from database import add_book_to_database, get_book_by_isbn, update_book_in_data
 st.markdown("""
 <style>
 div[data-testid="stSidebarNav"] {display: none;}
+div.block-container {padding-top: 1rem;}
 </style>
 """, unsafe_allow_html=True)
+
+# Save to add back a piece at a time
+# #MainMenu {visibility: hidden;}
+# footer {visibility: hidden;}
+# header {visibility: hidden;}
 
 def show_add_book_page():
     """Display the Add Book page with ISBN lookup and form"""
     
+    # Cncel and return to home page
+    if st.sidebar.button("Cancel", use_container_width=True):
+        st.switch_page("myLibrary.py")
+
     # Handle navigation flags FIRST
     if st.session_state.get('navigate_to_library'):
         del st.session_state.navigate_to_library
