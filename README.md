@@ -1,6 +1,6 @@
-# Personal Library Manager
+## Personal Library Management System - 
 
-A Streamlit-based personal library management system for tracking your book collection.
+A web application to catalog and manage your family's book collection. The system uses Streamlit for the frontend interface, PostgreSQL database hosted on Neon for cloud storage, and integrates with OpenLibrary and Google Books APIs for automatic metadata retrieval via ISBN lookup. The application is deployed on Streamlit Cloud with features including dual view modes (card/table), pagination, search/filter capabilities, book editing with navigation continuity, PIN-protected deletion, and a read-only view mode. The system evolved from a local SQLite prototype to a production cloud application, following a structured five-phase development approach with modular file architecture for maintainability.
 
 ## Features
 - View collection in table or card layout
@@ -10,7 +10,7 @@ A Streamlit-based personal library management system for tracking your book coll
 - Pagination support
 
 ## Database
-SQLite database with book metadata including title, author, ISBN, publisher, ratings, and cover images.
+PostgreSQL database with book metadata including title, author, ISBN, publisher, ratings, and cover images.
 
 ## Installation
 ```bash
@@ -19,4 +19,4 @@ streamlit run myLibrary.py
 ```
 
 ## Live Demo
-[Your Streamlit Cloud URL here]
+...
